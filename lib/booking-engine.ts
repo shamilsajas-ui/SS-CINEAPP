@@ -63,7 +63,7 @@ export async function holdSeats({
     throw new BookingError("Maximum 10 seats per booking", 400);
   }
 
-  return await db.transaction(async (tx) => {
+  return await db.transaction(async (tx: any) => {
     // 1. Fetch and validate showtime
     const [showtime] = await tx
       .select({
@@ -152,7 +152,7 @@ export async function holdSeats({
 
     // 5. Calculate price strictly on the server in minor units (cents)
     let subtotalMinorUnits = 0;
-    const itemsData = targetSeats.map((seat) => {
+    const itemsData = (targetSeats as any[]).map((seat: any) => {
       // multiplier is in basis points: 10000 = 1.00x, 12500 = 1.25x
       const seatPrice = Math.round(
         showtime.basePriceMinorUnits * (seat.basePriceMultiplier / 10000)
@@ -204,7 +204,7 @@ export async function holdSeats({
 
     // Insert booking items
     await tx.insert(schema.bookingItems).values(
-      itemsData.map((item) => ({
+      itemsData.map((item: any) => ({
         bookingId: booking.id,
         showtimeSeatId: item.showtimeSeatId,
         priceMinorUnits: item.priceMinorUnits,
@@ -237,7 +237,7 @@ export async function holdSeats({
       feeMinorUnits,
       taxMinorUnits,
       totalMinorUnits,
-      seats: itemsData.map((i) => ({
+      seats: itemsData.map((i: any) => ({
         seatId: i.showtimeSeatId,
         ...i.seatSnapshot,
         priceMinorUnits: i.priceMinorUnits,
@@ -295,7 +295,7 @@ export async function confirmPaymentAndBook({
     }
   }
 
-  return await db.transaction(async (tx) => {
+  return await db.transaction(async (tx: any) => {
     const [booking] = await tx
       .select()
       .from(schema.bookings)
@@ -343,7 +343,7 @@ export async function confirmPaymentAndBook({
       .from(schema.bookingItems)
       .where(eq(schema.bookingItems.bookingId, booking.id));
 
-    const showtimeSeatIds = items.map((i) => i.showtimeSeatId);
+    const showtimeSeatIds = (items as any[]).map((i: any) => i.showtimeSeatId);
 
     // Verify seats are still HELD by this user
     const currentSeats = await tx
@@ -464,7 +464,7 @@ export async function cancelBooking({
   ipAddress?: string;
   userAgent?: string;
 }) {
-  return await db.transaction(async (tx) => {
+  return await db.transaction(async (tx: any) => {
     const [booking] = await tx
       .select({
         id: schema.bookings.id,
@@ -519,7 +519,7 @@ export async function cancelBooking({
       .from(schema.bookingItems)
       .where(eq(schema.bookingItems.bookingId, booking.id));
 
-    const showtimeSeatIds = items.map((i) => i.showtimeSeatId);
+    const showtimeSeatIds = (items as any[]).map((i: any) => i.showtimeSeatId);
 
     // Update booking to CANCELLED
     await tx
@@ -589,7 +589,7 @@ export async function cancelBooking({
 export async function releaseExpiredHolds() {
   const now = new Date();
 
-  return await db.transaction(async (tx) => {
+  return await db.transaction(async (tx: any) => {
     // 1. Find all expired showtime_seats
     const expiredSeats = await tx
       .select({ id: schema.showtimeSeats.id })
@@ -603,7 +603,7 @@ export async function releaseExpiredHolds() {
 
     let releasedSeatsCount = 0;
     if (expiredSeats.length > 0) {
-      const seatIds = expiredSeats.map((s) => s.id);
+      const seatIds = (expiredSeats as any[]).map((s: any) => s.id);
       await tx
         .update(schema.showtimeSeats)
         .set({
@@ -629,7 +629,7 @@ export async function releaseExpiredHolds() {
 
     let expiredBookingsCount = 0;
     if (expiredBookings.length > 0) {
-      const bookingIds = expiredBookings.map((b) => b.id);
+      const bookingIds = (expiredBookings as any[]).map((b: any) => b.id);
       await tx
         .update(schema.bookings)
         .set({

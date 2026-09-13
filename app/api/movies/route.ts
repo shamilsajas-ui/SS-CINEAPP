@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
       conditions.push(eq(schema.movies.language, language));
     }
 
-    let moviesList = await db
+    let moviesList: (typeof schema.movies.$inferSelect)[] = await db
       .select()
       .from(schema.movies)
       .where(and(...conditions));
@@ -51,7 +51,7 @@ export async function GET(req: NextRequest) {
 
     // Filter by genre slug if specified
     if (genreSlug && genreSlug !== "all") {
-      moviesList = moviesList.filter((m) => {
+      moviesList = moviesList.filter((m: (typeof schema.movies.$inferSelect)) => {
         const genres = genresByMovie.get(m.id) || [];
         return genres.some((g) => g.slug.toLowerCase() === genreSlug.toLowerCase());
       });

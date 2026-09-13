@@ -78,7 +78,7 @@ export async function GET(
 
     const now = new Date();
 
-    const formattedSeats = showtimeSeatRows.map((seat) => {
+    const formattedSeats = (showtimeSeatRows as any[]).map((seat: any) => {
       let currentStatus = seat.status;
       // If HELD but expired, consider it AVAILABLE
       if (
@@ -122,17 +122,17 @@ export async function GET(
     }
 
     const rows = Array.from(rowsMap.entries())
-      .sort((a, b) => a[0].localeCompare(b[0]))
-      .map(([rowLabel, seats]) => ({
+      .sort((a: any, b: any) => a[0].localeCompare(b[0]))
+      .map(([rowLabel, seats]: [string, any]) => ({
         rowLabel,
-        seats: seats.sort((a, b) => a.number - b.number),
+        seats: seats.sort((a: any, b: any) => a.number - b.number),
       }));
 
     return NextResponse.json({
       showtime: showtimeData,
       rows,
       totalSeats: showtimeData.totalSeats,
-      availableCount: formattedSeats.filter((s) => s.status === "AVAILABLE")
+      availableCount: formattedSeats.filter((s: any) => s.status === "AVAILABLE")
         .length,
     });
   } catch (err: any) {

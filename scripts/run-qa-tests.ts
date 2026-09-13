@@ -51,8 +51,8 @@ async function runQATestSuite() {
 
   // TEST 2: Authentication & Password Security
   console.log("\n👉 Test Suite 2: Authentication & Password Security");
-  const adminUser = usersList.find((u) => u.role === "ADMIN")!;
-  const customerUser = usersList.find((u) => u.role === "USER")!;
+  const adminUser = (usersList as any[]).find((u: any) => u.role === "ADMIN")!;
+  const customerUser = (usersList as any[]).find((u: any) => u.role === "USER")!;
 
   const isPasswordValid = await bcrypt.compare(
     "adminpassword123",
@@ -258,7 +258,7 @@ async function runQATestSuite() {
   console.log("\n👉 Test Suite 8: Customer Booking Cancellation");
   // Find a showtime tomorrow (well > 2 hours in future)
   const futureTime = new Date(Date.now() + 24 * 60 * 60 * 1000);
-  const futureShowtimes = showtimesList.filter((s) => new Date(s.startTime) > futureTime);
+  const futureShowtimes = (showtimesList as any[]).filter((s: any) => new Date(s.startTime) > futureTime);
   const futureShowtime = futureShowtimes[0] || showtimesList[showtimesList.length - 1];
 
   const [futureSeat] = await db

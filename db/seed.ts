@@ -395,7 +395,7 @@ export async function seedDatabase() {
         showtimeCount++;
 
         // Populate showtime_seats
-        const showtimeSeatInserts = audSeats.map((s, idx) => {
+        const showtimeSeatInserts = (audSeats as any[]).map((s: any, idx: number) => {
           // Preset a couple seats as BOOKED or HELD to show real layout state
           let status: "AVAILABLE" | "HELD" | "BOOKED" = "AVAILABLE";
           if (dayOffset === 0 && (idx === 2 || idx === 3)) {

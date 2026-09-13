@@ -40,6 +40,7 @@ interface BookingDetails {
   auditoriumName: string;
   format: string;
   startTime: string;
+  showtimeId?: string;
   seats: SeatSnapshot[];
 }
 
