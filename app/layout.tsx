@@ -15,6 +15,8 @@ export const metadata: Metadata = {
     "Book movie tickets with real-time seat availability, instant digital QR passes, and verified cinema schedules.",
 };
 
+import MockApiProvider from "@/components/MockApiProvider";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -23,9 +25,11 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${inter.variable} antialiased min-h-screen flex flex-col bg-cine-950 text-slate-100`}>
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <MockApiProvider>
+          <Navbar />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </MockApiProvider>
       </body>
     </html>
   );
